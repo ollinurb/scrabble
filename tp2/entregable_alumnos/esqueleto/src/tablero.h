@@ -6,7 +6,7 @@
 class tablero {
 public:
     tablero(const Nat);
-    const bool hayLetra(Nat, Nat ) const;
+    const bool hayLetra(Nat, Nat) const;
     const Nat tamaño() const;
     const tuple<Letra, Nat> letra(Nat, Nat) const;
     void ponerLetra(Nat, Nat, Letra, Nat);

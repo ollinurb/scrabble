@@ -3,7 +3,7 @@
 
 #include "Tipos.h"
 #include "Fachada_Variante.h"
-
+#include "juego.h"
 
 class Fachada_Juego {
 public:
@@ -12,7 +12,7 @@ public:
      *
      * Complejidad: O(tamanoTab**2 + ALPHABET_SIZE*cantJugadores + cantFichas*cantJugadores)
      */
-    Fachada_Juego(Nat k, const Fachada_Variante& v, const Repositorio& r);
+    Fachada_Juego(Nat k, const Fachada_Variante& v, Repositorio& r); //quitamos el const del elemento repositorio ya que sino no podemos modificarlo.
 
     /**
      * Ubica una Ocurrencia o en el juego
@@ -74,7 +74,8 @@ public:
     Nat cantFicha(IdCliente id, Letra l);
 
 private:
-    // Completar
+    juego _juego;
+    Fachada_Variante _fvariante;
 };
 
 #endif // FACHADA_JUEGO_H

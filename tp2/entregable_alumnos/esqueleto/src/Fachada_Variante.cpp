@@ -20,3 +20,7 @@ Nat Fachada_Variante::puntajeLetra(Letra l) const{
 bool Fachada_Variante::palabraLegitima(const Palabra& palabra) const{
     return _variante.palabraLegitima(palabra);
 }
+
+const variante Fachada_Variante::nuestroVariante() const{
+    return _variante;
+}

@@ -36,6 +36,8 @@ public:
      */
     bool palabraLegitima(const Palabra& palabra) const;
 
+    const variante nuestroVariante() const;
+
 private:
     variante _variante;
 };
