@@ -104,7 +104,7 @@ const Nat juego::puntaje(IdCliente id){
         vector<tuple<Letra, Nat, Nat, Nat>> jugadaActual = _ultimasFichasxJugador[id][i];
         bool ocurrenciaComunVertical = (jugadaActual.size() > 1 && get<3>(jugadaActual[0]) == get<3>(jugadaActual[1]));
         bool ocurrenciaComunHorizontal = (jugadaActual.size() > 1 && get<2>(jugadaActual[0]) == get<2>(jugadaActual[1]));
-        if (ocurrenciaComunHorizontal) {
+        if (ocurrenciaComunHorizontal || jugadaActual.size() == 1) {
             Nat ronda = get<1>(jugadaActual[0]);
             Nat f = get<2>(jugadaActual[0]); // fila
             Nat c = get<3>(jugadaActual[0]); // columna

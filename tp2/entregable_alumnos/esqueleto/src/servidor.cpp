@@ -16,7 +16,7 @@ IdCliente servidor::conectarCliente(){
     if(_jugadores.size() == _esperados){
         _broadcast.push_back(make_tuple(Notificacion::nuevaEmpezar(_juego.varianteJuego().tamañoTablero()),timeStamp));
         timeStamp++;
-        _broadcast.push_back(make_tuple(Notificacion::nuevaTurnoDe(id),timeStamp));
+        _broadcast.push_back(make_tuple(Notificacion::nuevaTurnoDe(0),timeStamp));
         timeStamp++;
         }
     return id;
@@ -26,11 +26,11 @@ list<Notificacion> servidor::consultarNotificaciones(Nat c) {
     list<Notificacion> lista;
     while(!get<0>(_notifJugador[c]).empty() || get<1>(_notifJugador[c]) < _broadcast.size()) {
         // mientras haya notificaciones disponibles.
-        if (get<0>(_notifJugador[c]).empty()) {
+        if (get<0>(_notifJugador[c]).empty()) { // si el jugador solo tiene notifs generales
             lista.push_back(get<0>(_broadcast[get<1>(_notifJugador[c])]));
             get<1>(_notifJugador[c])++;
         }
-        else {
+        else if (get<1>(_notifJugador[c]) < _broadcast.size()) { // si tiene ambas notifs
             Nat timeStampJug = get<1>(get<0>(_notifJugador[c]).front());
             Nat timeStampBC = get<1>(_broadcast[get<1>(_notifJugador[c])]);
             if (timeStampJug < timeStampBC) {
@@ -41,7 +41,11 @@ list<Notificacion> servidor::consultarNotificaciones(Nat c) {
                 lista.push_back(get<0>(_broadcast[get<1>(_notifJugador[c])]));
                 get<1>(_notifJugador[c])++;
             }
-        } //endwhile l27
+        }
+        else { // si solo tiene notifs privadas
+            lista.push_back(get<0>(get<0>(_notifJugador[c]).front())); //La prox notif es del jugador.
+            get<0>(_notifJugador[c]).pop_front();
+        }
     }
     return lista;
 }
@@ -49,7 +53,7 @@ list<Notificacion> servidor::consultarNotificaciones(Nat c) {
 
 
 void servidor::recibirMensaje(Nat id,Ocurrencia o){
-    if (_juego.turno() == id && _juego.jugadaValida(o)){
+    if (_esperados == _jugadores.size() && _juego.turno() == id && _juego.jugadaValida(o)){
         Nat puntajeAntesUbicar = _juego.puntaje(id);
         _juego.ubicar(o);
 
