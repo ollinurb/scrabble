@@ -111,6 +111,12 @@ build libgtest_main.a: CXX_STATIC_LIBRARY_LINKER__gtest_main_Debug CMakeFiles/gt
 
 build cmake_object_order_depends_target_correrTests: phony || cmake_object_order_depends_target_gtest cmake_object_order_depends_target_gtest_main
 
+build CMakeFiles/correrTests.dir/src/Fachada_Juego.cpp.o: CXX_COMPILER__correrTests_Debug /home/ollinurb/Downloads/entregable_alumnos/esqueleto/src/Fachada_Juego.cpp || cmake_object_order_depends_target_correrTests
+  DEP_FILE = CMakeFiles/correrTests.dir/src/Fachada_Juego.cpp.o.d
+  FLAGS = -pthread -std=gnu++11 -ggdb3 -g -g -std=gnu++11
+  OBJECT_DIR = CMakeFiles/correrTests.dir
+  OBJECT_FILE_DIR = CMakeFiles/correrTests.dir/src
+
 build CMakeFiles/correrTests.dir/src/Fachada_Variante.cpp.o: CXX_COMPILER__correrTests_Debug /home/ollinurb/Downloads/entregable_alumnos/esqueleto/src/Fachada_Variante.cpp || cmake_object_order_depends_target_correrTests
   DEP_FILE = CMakeFiles/correrTests.dir/src/Fachada_Variante.cpp.o.d
   FLAGS = -pthread -std=gnu++11 -ggdb3 -g -g -std=gnu++11
@@ -137,6 +143,12 @@ build CMakeFiles/correrTests.dir/src/Trie.cpp.o: CXX_COMPILER__correrTests_Debug
 
 build CMakeFiles/correrTests.dir/src/juego.cpp.o: CXX_COMPILER__correrTests_Debug /home/ollinurb/Downloads/entregable_alumnos/esqueleto/src/juego.cpp || cmake_object_order_depends_target_correrTests
   DEP_FILE = CMakeFiles/correrTests.dir/src/juego.cpp.o.d
+  FLAGS = -pthread -std=gnu++11 -ggdb3 -g -g -std=gnu++11
+  OBJECT_DIR = CMakeFiles/correrTests.dir
+  OBJECT_FILE_DIR = CMakeFiles/correrTests.dir/src
+
+build CMakeFiles/correrTests.dir/src/servidor.cpp.o: CXX_COMPILER__correrTests_Debug /home/ollinurb/Downloads/entregable_alumnos/esqueleto/src/servidor.cpp || cmake_object_order_depends_target_correrTests
+  DEP_FILE = CMakeFiles/correrTests.dir/src/servidor.cpp.o.d
   FLAGS = -pthread -std=gnu++11 -ggdb3 -g -g -std=gnu++11
   OBJECT_DIR = CMakeFiles/correrTests.dir
   OBJECT_FILE_DIR = CMakeFiles/correrTests.dir/src
@@ -227,7 +239,7 @@ build CMakeFiles/correrTests.dir/tests/variante-tests.cpp.o: CXX_COMPILER__corre
 #############################################
 # Link the executable correrTests
 
-build correrTests: CXX_EXECUTABLE_LINKER__correrTests_Debug CMakeFiles/correrTests.dir/src/Fachada_Variante.cpp.o CMakeFiles/correrTests.dir/src/Letra.cpp.o CMakeFiles/correrTests.dir/src/Notificacion.cpp.o CMakeFiles/correrTests.dir/src/Trie.cpp.o CMakeFiles/correrTests.dir/src/juego.cpp.o CMakeFiles/correrTests.dir/src/tablero.cpp.o CMakeFiles/correrTests.dir/src/variante.cpp.o CMakeFiles/correrTests.dir/tests/utils/NotificacionesUtils.cpp.o CMakeFiles/correrTests.dir/tests/utils/PalabrasComunes.cpp.o CMakeFiles/correrTests.dir/tests/juego-empezado-tests.cpp.o CMakeFiles/correrTests.dir/tests/juego-grande-tests.cpp.o CMakeFiles/correrTests.dir/tests/juego-tests.cpp.o CMakeFiles/correrTests.dir/tests/juego-trivial-tests.cpp.o CMakeFiles/correrTests.dir/tests/letra-tests.cpp.o CMakeFiles/correrTests.dir/tests/notificacion-tests.cpp.o CMakeFiles/correrTests.dir/tests/servidor-tests.cpp.o CMakeFiles/correrTests.dir/tests/tablero-tests.cpp.o CMakeFiles/correrTests.dir/tests/variante-tests.cpp.o | libgtest.a libgtest_main.a || libgtest.a libgtest_main.a
+build correrTests: CXX_EXECUTABLE_LINKER__correrTests_Debug CMakeFiles/correrTests.dir/src/Fachada_Juego.cpp.o CMakeFiles/correrTests.dir/src/Fachada_Variante.cpp.o CMakeFiles/correrTests.dir/src/Letra.cpp.o CMakeFiles/correrTests.dir/src/Notificacion.cpp.o CMakeFiles/correrTests.dir/src/Trie.cpp.o CMakeFiles/correrTests.dir/src/juego.cpp.o CMakeFiles/correrTests.dir/src/servidor.cpp.o CMakeFiles/correrTests.dir/src/tablero.cpp.o CMakeFiles/correrTests.dir/src/variante.cpp.o CMakeFiles/correrTests.dir/tests/utils/NotificacionesUtils.cpp.o CMakeFiles/correrTests.dir/tests/utils/PalabrasComunes.cpp.o CMakeFiles/correrTests.dir/tests/juego-empezado-tests.cpp.o CMakeFiles/correrTests.dir/tests/juego-grande-tests.cpp.o CMakeFiles/correrTests.dir/tests/juego-tests.cpp.o CMakeFiles/correrTests.dir/tests/juego-trivial-tests.cpp.o CMakeFiles/correrTests.dir/tests/letra-tests.cpp.o CMakeFiles/correrTests.dir/tests/notificacion-tests.cpp.o CMakeFiles/correrTests.dir/tests/servidor-tests.cpp.o CMakeFiles/correrTests.dir/tests/tablero-tests.cpp.o CMakeFiles/correrTests.dir/tests/variante-tests.cpp.o | libgtest.a libgtest_main.a || libgtest.a libgtest_main.a
   FLAGS = -pthread -std=gnu++11 -ggdb3 -g -g
   LINK_LIBRARIES = libgtest.a  libgtest_main.a
   OBJECT_DIR = CMakeFiles/correrTests.dir
