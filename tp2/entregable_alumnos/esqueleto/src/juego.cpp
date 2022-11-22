@@ -64,10 +64,10 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
     while (i < o.size() && res) { // Para cada elemento de la ocurrencia
         unsigned int f = get<0>(o[i]);
         unsigned int c = get<1>(o[i]);
-        while (_tablero.hayLetra(f, c - 1) && _tablero.enTablero(f, c - 1) && res) { // Obtener primer letra de palabra horizontal.
+        while (_tablero.enTablero(f, c - 1) && _tablero.hayLetra(f, c - 1) && res) { // Obtener primer letra de palabra horizontal.
             c--;
         }
-        while ((_tablero.hayLetra(f, c) || c == get<1>(o[i])) && _tablero.enTablero(f, c) && res){ // Avanzamos hasta la última para conseguir la palabra horizontal.
+        while (_tablero.enTablero(f, c) && (_tablero.hayLetra(f, c) || c == get<1>(o[i])) && res){ // Avanzamos hasta la última para conseguir la palabra horizontal.
             if (c == get<1>(o[i])) {
                 palabra.push_back(get<2>(o[i]));
             }
@@ -81,10 +81,10 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
         }
         palabra.clear();
         c = get<1>(o[i]);
-        while ((_tablero.hayLetra(f - 1, c)) && _tablero.enTablero(f - 1, c) && res) { // Analogamente a buscar la palabra horizontal pero vertical
+        while (_tablero.enTablero(f - 1, c) && (_tablero.hayLetra(f - 1, c)) && res) { // Analogamente a buscar la palabra horizontal pero vertical
             f--;
         }
-        while((_tablero.hayLetra(f, c)) || f == get<0>(o[i])  && _tablero.enTablero(f, c) && res) {
+        while(_tablero.enTablero(f, c) && _tablero.hayLetra(f, c) || f == get<0>(o[i]) && res) {
             if (f == get<0>(o[i]))
                 palabra.push_back(get<2>(o[i]));
             else
@@ -100,22 +100,21 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
 }
 
 const Nat juego::puntaje(IdCliente id){
-    for(int i = 0; i  < _ultimasFichasxJugador[id].size(); i++) { //iteras sobre las rondas/jugadas
+    for(int i = 0; i < _ultimasFichasxJugador[id].size(); i++) { //iteras sobre las rondas/jugadas
         vector<tuple<Letra, Nat, Nat, Nat>> jugadaActual = _ultimasFichasxJugador[id][i];
         bool ocurrenciaComunVertical = (jugadaActual.size() > 1 && get<3>(jugadaActual[0]) == get<3>(jugadaActual[1]));
-        bool ocurrenciaComunHorizontal = !ocurrenciaComunVertical;
-        Nat ronda = get<1>(jugadaActual[0]);
-        Nat f = get<2>(jugadaActual[0]); // fila
-        Nat c = get<3>(jugadaActual[0]); // columna
-        _puntaje[id] += _variante.puntajeLetra(get<0>(jugadaActual[0]));
-
+        bool ocurrenciaComunHorizontal = (jugadaActual.size() > 1 && get<2>(jugadaActual[0]) == get<2>(jugadaActual[1]));
         if (ocurrenciaComunHorizontal) {
-            while (_tablero.hayLetra(f, c - 1) && _tablero.enTablero(f, c - 1) && get<1>(_tablero.letra(f, c - 1)) <= _ronda) {
+            Nat ronda = get<1>(jugadaActual[0]);
+            Nat f = get<2>(jugadaActual[0]); // fila
+            Nat c = get<3>(jugadaActual[0]); // columna
+            _puntaje[id] += _variante.puntajeLetra(get<0>(jugadaActual[0]));
+            while (_tablero.hayLetra(f, c - 1) && _tablero.enTablero(f, c - 1) && get<1>(_tablero.letra(f, c - 1)) <= ronda) {
                 _puntaje[id] += _variante.puntajeLetra(get<0>(_tablero.letra(f, c - 1)));
                 c--;
             }
             c = get<3>(jugadaActual[0]);
-            while (_tablero.hayLetra(f, c + 1) && _tablero.enTablero(f, c + 1) && get<1>(_tablero.letra(f, c + 1)) <= _ronda){
+            while (_tablero.hayLetra(f, c + 1) && _tablero.enTablero(f, c + 1) && get<1>(_tablero.letra(f, c + 1)) <= ronda){
                 _puntaje[id] += _variante.puntajeLetra(get<0>(_tablero.letra(f, c+1)));
                 c++;
             }
@@ -123,26 +122,31 @@ const Nat juego::puntaje(IdCliente id){
             while(j < jugadaActual.size()) {
                 f = get<2>(jugadaActual[j]);// fila
                 c = get<3>(jugadaActual[j]); // columna
-                while (_tablero.hayLetra(f - 1, c) && _tablero.enTablero(f - 1, c) && get<1>(_tablero.letra(f - 1, c)) <= _ronda) {
+                while (_tablero.hayLetra(f - 1, c) && _tablero.enTablero(f - 1, c) && get<1>(_tablero.letra(f - 1, c)) <= ronda) {
                     _puntaje[id] += _variante.puntajeLetra(get<0>(_tablero.letra(f - 1, c)));
                     f--;
                 }
 
                 f = get<2>(jugadaActual[j]); //se reinicia la fila
-                while (_tablero.hayLetra(f + 1, c) && _tablero.enTablero(f + 1, c) && get<1>(_tablero.letra(f + 1, c)) <= _ronda) {
+                while (_tablero.hayLetra(f + 1, c) && _tablero.enTablero(f + 1, c) && get<1>(_tablero.letra(f + 1, c)) <= ronda) {
                     _puntaje[id] += _variante.puntajeLetra(get<0>(_tablero.letra(f + 1, c)));
                     f++;
                 }
+                j++;
             }
         }
 
-        else {
-            while (_tablero.hayLetra(f-1,c) && _tablero.enTablero(f - 1, c) && get<1>(_tablero.letra(f - 1, c)) <= _ronda){
+        else if(ocurrenciaComunVertical) {
+            Nat ronda = get<1>(jugadaActual[0]);
+            Nat f = get<2>(jugadaActual[0]); // fila
+            Nat c = get<3>(jugadaActual[0]); // columna
+            _puntaje[id] += _variante.puntajeLetra(get<0>(jugadaActual[0]));
+            while (_tablero.hayLetra(f-1,c) && _tablero.enTablero(f - 1, c) && get<1>(_tablero.letra(f - 1, c)) <= ronda){
                     _puntaje[id] += _variante.puntajeLetra(get<0>(_tablero.letra(f - 1, c)));
                     f--;
             }
             f = get<3>(jugadaActual[0]); //reinicias la fila
-            while (_tablero.hayLetra(f + 1, c) && _tablero.enTablero(f + 1,c) && get<1>(_tablero.letra(f + 1, c)) <= _ronda){
+            while (_tablero.hayLetra(f + 1, c) && _tablero.enTablero(f + 1,c) && get<1>(_tablero.letra(f + 1, c)) <= ronda){
                 _puntaje[id] += _variante.puntajeLetra(get<0>(_tablero.letra(f + 1, c)));
                 f++;
             }
@@ -150,15 +154,16 @@ const Nat juego::puntaje(IdCliente id){
             while(j < jugadaActual.size()) {
                 f = get<2>(jugadaActual[j]); // fila
                 c = get<3>(jugadaActual[j]);// columna
-                while (_tablero.hayLetra(f, c + 1) && _tablero.enTablero(f, c + 1) && get<1>(_tablero.letra(f, c + 1)) <= _ronda){
+                while (_tablero.hayLetra(f, c + 1) && _tablero.enTablero(f, c + 1) && get<1>(_tablero.letra(f, c + 1)) <= ronda){
                     _puntaje[id] += get<0>(_tablero.letra(f, c + 1));
                     c++;
                 }
                 c = get<2>(jugadaActual[j]);
-                while(_tablero.hayLetra(f,c - 1) && _tablero.enTablero(f,c - 1) && get<1>(_tablero.letra(f, c - 1)) <= _ronda){
+                while(_tablero.hayLetra(f,c - 1) && _tablero.enTablero(f,c - 1) && get<1>(_tablero.letra(f, c - 1)) <= ronda){
                     _puntaje[id] += get<0>(_tablero.letra(f, c - 1));
                     c--;
                 }
+                j++;
             }
         }
     }

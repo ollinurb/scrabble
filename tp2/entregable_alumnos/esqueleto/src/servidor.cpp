@@ -37,11 +37,11 @@ list<Notificacion> servidor::consultarNotificaciones(Nat c) {
                 lista.push_back(get<0>(get<0>(_notifJugador[c]).front())); //La prox notif es del jugador.
                 get<0>(_notifJugador[c]).pop_front();
             }
-            else if (get<1>(_notifJugador[c]) != _broadcast.size()){//La prox notif es general.
+            else {//La prox notif es general.
                 lista.push_back(get<0>(_broadcast[get<1>(_notifJugador[c])]));
                 get<1>(_notifJugador[c])++;
             }
-        }
+        } //endwhile l27
     }
     return lista;
 }
