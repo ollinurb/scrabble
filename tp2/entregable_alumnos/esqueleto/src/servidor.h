@@ -8,8 +8,8 @@
 class servidor {
 public:
     servidor(Nat, const variante&, Repositorio&);
-    void conectarCliente();
-    void consultarNotificaciones(Nat);
+    IdCliente conectarCliente();
+    list<Notificacion> consultarNotificaciones(Nat);
     void recibirMensaje(Nat,Ocurrencia);
     const Nat esperados();
     const Nat conectados();

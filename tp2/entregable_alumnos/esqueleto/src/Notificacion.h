@@ -43,7 +43,7 @@ public:
      *
      * Pre: this->tipoNotificacion() == TipoNotificacion::Empezar
      */
-    static Nat empezar() const;
+    Nat empezar() const;
 
     /**
      * Retorna el id del cliente al que le toca jugar en notificaciones de tipo TurnoDe

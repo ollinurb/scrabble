@@ -4,7 +4,8 @@
 
 juego::juego(const Nat k, const class variante& v, Repositorio& r) : _cantJugadores(k), _tablero(v.tamañoTablero()), _variante(v),
                                                                 _repositorio(r), _turno(0), _ronda(0) {
-    vector<Nat> _puntaje(k, 0);
+    vector<Nat> puntaje(k, 0);
+    _puntaje = puntaje;
 
     vector<vector<Nat>> fichasEnMano(k, vector<Nat>(TAMANIO_ALFABETO, 0));
     _fichasEnMano = fichasEnMano;

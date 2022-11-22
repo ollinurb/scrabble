@@ -4,7 +4,7 @@
 #include "Tipos.h"
 #include "Notificacion.h"
 #include "Fachada_Variante.h"
-
+#include "servidor.h"
 
 class Fachada_Servidor {
 public:
@@ -17,7 +17,7 @@ public:
     Fachada_Servidor(
         Nat cantJugadores,
         const Fachada_Variante& variante,
-        const Repositorio& r
+        Repositorio& r
     );
 
     /**
@@ -60,7 +60,7 @@ public:
     std::list<Notificacion> notificaciones(IdCliente id);
 
 private:
-    // Completar
+    servidor _servidor;
 };
 
 #endif // FACHADA_SERVIDOR_H

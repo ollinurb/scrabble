@@ -1,10 +1,14 @@
 #include "servidor.h"
 
-servidor::servidor(Nat n, const variante& v, Repositorio& r) : _juego(n, v, r), timeStamp(0), _esperados(n){
-    _notifJugador(_esperados);
+servidor::servidor(Nat n, const variante& v, Repositorio& r) : _juego(n, v, r), timeStamp(0), _esperados(n), _broadcast(),
+                    _jugadores() {
+    list<tuple<Notificacion, Nat>> listaVacia;
+    auto tuplaNotif = make_tuple(listaVacia, 0);
+    vector<tuple<list<tuple<Notificacion,Nat>>, Nat>> notifJugador(_esperados, tuplaNotif);
+    _notifJugador = notifJugador;
 }
 
-void servidor::conectarCliente(){
+IdCliente servidor::conectarCliente(){
     Nat id = _jugadores.size();
     _jugadores.push_back(id);
     get<0>(_notifJugador[id]).push_back(make_tuple(Notificacion::nuevaIdCliente(id), timeStamp));
@@ -15,29 +19,37 @@ void servidor::conectarCliente(){
         _broadcast.push_back(make_tuple(Notificacion::nuevaTurnoDe(id),timeStamp));
         timeStamp++;
         }
+    return id;
 }
 
-void servidor::consultarNotificaciones(Nat c) {
-    while(get<0>(_notifJugador[c]).empty() || get<1>(_notifJugador[c]) < _broadcast.size()) {
+list<Notificacion> servidor::consultarNotificaciones(Nat c) {
+    list<Notificacion> lista;
+    while(!get<0>(_notifJugador[c]).empty() || get<1>(_notifJugador[c]) < _broadcast.size()) {
         // mientras haya notificaciones disponibles.
-        if (get<0>(_notifJugador[c]).empty())
+        if (get<0>(_notifJugador[c]).empty()) {
+            lista.push_back(get<0>(_broadcast[get<1>(_notifJugador[c])]));
             get<1>(_notifJugador[c])++;
-
+        }
         else {
             Nat timeStampJug = get<1>(get<0>(_notifJugador[c]).front());
             Nat timeStampBC = get<1>(_broadcast[get<1>(_notifJugador[c])]);
-            if (timeStampJug < timeStampBC) //La prox notif es del jugador.
+            if (timeStampJug < timeStampBC) {
+                lista.push_back(get<0>(get<0>(_notifJugador[c]).front())); //La prox notif es del jugador.
                 get<0>(_notifJugador[c]).pop_front();
-            else //La prox notif es general.
+            }
+            else if (get<1>(_notifJugador[c]) != _broadcast.size()){//La prox notif es general.
+                lista.push_back(get<0>(_broadcast[get<1>(_notifJugador[c])]));
                 get<1>(_notifJugador[c])++;
+            }
         }
     }
+    return lista;
 }
 
 
 
 void servidor::recibirMensaje(Nat id,Ocurrencia o){
-    if (_juego.jugadaValida(o)){
+    if (_juego.turno() == id && _juego.jugadaValida(o)){
         Nat puntajeAntesUbicar = _juego.puntaje(id);
         _juego.ubicar(o);
 
