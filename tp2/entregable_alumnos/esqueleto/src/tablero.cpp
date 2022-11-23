@@ -23,7 +23,7 @@ const tuple<Letra, Nat> tablero::letra(Nat i, Nat j) const{
 }
 
 void tablero::ponerLetra(Nat i, Nat j, Letra l, Nat r){
-    _tablero[i][j] = make_tuple(l,r);
+    _tablero[j][i] = make_tuple(l,r);
 }
 
 const bool tablero::enTablero(Nat i, Nat j) const{

@@ -50,6 +50,52 @@ void juego::ubicar(const Ocurrencia &o){
     _ronda++;
     _turno = (_turno + 1 ) % _cantJugadores;
 }
+/*
+vector<tuple<Nat, Nat, Letra>> merge(vector<tuple<Nat, Nat, Letra>>& v1, vector<tuple<Nat, Nat, Letra>> v2, bool horizontal){
+    vector<tuple<Nat, Nat, Letra>>res(v1.size() + v2.size());
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    if(horizontal){
+        while(k < res.size()){
+            if (i >= v1.size() || (j < v2.size() && get<1>(v2[j]) < get<1>(v1[i]))){
+                res[k] = v2[j];
+                j++;
+            }
+            else{
+                res[k] = v1[i];
+                i++;
+            }
+            k++;
+        }
+    }
+    else{
+        while(k < res.size()){
+            if (i >= v1.size() || (j < v2.size() && get<0>(v2[j]) < get<0>(v1[i]))){
+                res[k] = v2[j];
+                j++;
+            }
+            else{
+                res[k] = v1[i];
+                i++;
+            }
+            k++;
+        }
+    }
+    return res;
+}
+
+vector<tuple<Nat, Nat, Letra>> mergeSortCustom(vector<tuple<Nat, Nat, Letra>> &v, bool horizontal){
+    if(v.size() == 1){
+        return v;
+    }
+    vector<tuple<Nat, Nat, Letra>> v2 = vector<tuple<Nat, Nat, Letra>>(v.begin(), v.begin() + (v.size()/2));
+    vector<tuple<Nat, Nat, Letra>> v3 = vector<tuple<Nat, Nat, Letra>>(v.begin() + v.size()/2, v.end());
+
+    v2 = mergeSortCustom(v2, horizontal);
+    v3 = mergeSortCustom(v3, horizontal);
+    return merge(v2, v3, horizontal);
+}*/
 
 const bool juego::jugadaValida(const Ocurrencia& ocurs){
     bool res = true;
@@ -58,11 +104,11 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
         res = false;
     }
     Palabra palabra;
-    int i = 0;
     vector<tuple<Nat, Nat, Letra>> o;
     for(const auto& x : ocurs){
-        o.push_back(x);
+        o.push_back(make_tuple(get<1>(x), get<0>(x), get<2>(x)));
     }
+
 
     bool ocurrenciaComunVertical = true;
     bool ocurrenciaComunHorizontal = true;
@@ -77,59 +123,76 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
     Nat minFila = fila;
     Nat minColumna = columna;
 
+    /*
+     * P A R A
+     * O
+     * R
+     */
+
     for(const auto& ficha : o){
-        if(get<0>(ficha) != fila)
-            ocurrenciaComunVertical = false;
-        if(get<1>(ficha) != columna)
+        if(get<0>(ficha) != fila) {
             ocurrenciaComunHorizontal = false;
+        }
+        if(get<1>(ficha) != columna) {
+            ocurrenciaComunVertical = false;
+        }
         if(get<0>(ficha) > maxFila || get<0>(ficha) < minFila){
             maxFila = (get<0>(ficha) > maxFila) ? get<0>(ficha) : maxFila;
             minFila = (get<0>(ficha) < minFila) ? get<0>(ficha) : minFila;
         }
         if(get<1>(ficha) > maxColumna || get<1>(ficha) < minColumna){
-            maxFila = (get<1>(ficha) > maxColumna) ? get<1>(ficha) : maxColumna;
-            minFila = (get<1>(ficha) < minColumna) ? get<1>(ficha) : minColumna;
+            maxColumna = (get<1>(ficha) > maxColumna) ? get<1>(ficha) : maxColumna;
+            minColumna = (get<1>(ficha) < minColumna) ? get<1>(ficha) : minColumna;
         }
     }
-    if(!ocurrenciaComunHorizontal && !ocurrenciaComunVertical)
+    if(!ocurrenciaComunHorizontal && !ocurrenciaComunVertical) {
         res = false;
+    }
 
-    if((ocurrenciaComunVertical && (maxFila - minFila) > Lmax) || (ocurrenciaComunVertical && (maxColumna - minColumna) > Lmax))
+    if((ocurrenciaComunVertical && (maxFila - minFila) > Lmax) || (ocurrenciaComunVertical && (maxColumna - minColumna) > Lmax)) {
         res = false;
+    }
 
-    else if(o.size() > 1 && res){
+    else if(o.size() > 1 && res){ //chequea ocurrencia discontinua
         Nat espaciosTablero = 0;
         if(ocurrenciaComunVertical){
             for(Nat i = minFila; i <= maxFila; i++){
-                if(!_tablero.hayLetra(i, get<1>(o[0])))
+                if(!_tablero.hayLetra(i, get<1>(o[0]))) {
                     espaciosTablero++;
+                }
             }
-            if(espaciosTablero > o.size())
+            if(espaciosTablero > o.size()) {
                 res = false;
+            }
         }
         else{
             for(Nat i = minColumna; i <= maxColumna; i++){
-                if(!_tablero.hayLetra(get<0>(o[0]), i))
+                if(!_tablero.hayLetra(get<0>(o[0]), i)) {
                     espaciosTablero++;
+                }
             }
-            if(espaciosTablero > o.size())
-                res = false;
+            res = espaciosTablero <= o.size();
         }
     }
+
+    int i = 0;
+    // auto ocurrenciaOrdenada = mergeSortCustom(o, ocurrenciaComunHorizontal);
     while (i < o.size() && res) { // Para cada elemento de la ocurrencia
         unsigned int f = get<0>(o[i]);
         unsigned int c = get<1>(o[i]);
+        int j = i;
         while (_tablero.enTablero(f, c - 1) && _tablero.hayLetra(f, c - 1) && res) { // Obtener primer letra de palabra horizontal.
             c--;
         }
-        while (_tablero.enTablero(f, c) && (_tablero.hayLetra(f, c) || c == get<1>(o[i])) && res){ // Avanzamos hasta la última para conseguir la palabra horizontal.
-            if (c == get<1>(o[i])) {
-                palabra.push_back(get<2>(o[i]));
+        while (_tablero.enTablero(f, c) && (_tablero.hayLetra(f, c) || c == get<1>(o[j])) && res){ // Avanzamos hasta la última para conseguir la palabra horizontal.
+            if (c == get<1>(o[j])) {
+                palabra.push_back(get<2>(o[j]));
+                j++;
             }
             else {
                 palabra.push_back(get<0>(_tablero.letra(f, c)));
             }
-        c++;
+            c++;
         }
         if (!_variante.palabraLegitima(palabra)){ //Chequear validez de palabra.
             res = false;
@@ -139,17 +202,19 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
         while (_tablero.enTablero(f - 1, c) && (_tablero.hayLetra(f - 1, c)) && res) { // Analogamente a buscar la palabra horizontal pero vertical
             f--;
         }
-        while(_tablero.enTablero(f, c) && _tablero.hayLetra(f, c) || f == get<0>(o[i]) && res) {
-            if (f == get<0>(o[i]))
-                palabra.push_back(get<2>(o[i]));
-            else
+        j = i;
+        while(_tablero.enTablero(f, c) && _tablero.hayLetra(f, c) || f == get<0>(o[j]) && res) {
+            if (f == get<0>(o[j])) {
+                palabra.push_back(get<2>(o[j]));
+                j++;
+            } else
                 palabra.push_back(get<0>(_tablero.letra(f, c)));
             f++;
         }
-       if (! _variante.palabraLegitima(palabra))
-         res = false;
-       palabra.clear();
-       i++;
+        if (! _variante.palabraLegitima(palabra))
+            res = false;
+        palabra.clear();
+        i++;
     }
     return res;
 }

@@ -1,7 +1,20 @@
 #include "Trie.h"
 
 Trie::Trie() : _raiz(new Nodo()) {};
+/*
+Trie::~Trie(){
+    destruirNodos(_raiz);
+}
 
+void Trie::destruirNodos(Trie::Nodo *& raiz) {
+    for(int i = 0; i < TAMANIO_ALFABETO; i++){
+        if(raiz->hijos[i] != nullptr){
+            destruirNodos(raiz->hijos[i]);
+        }
+    }
+    delete(raiz);
+}
+*/
 void Trie::agregar(const Palabra p){
     Nodo* actual = _raiz;
     for (int i = 0; i < p.size(); i++){

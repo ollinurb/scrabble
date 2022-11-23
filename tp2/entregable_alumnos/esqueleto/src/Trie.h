@@ -17,7 +17,7 @@ private:
 
         Nodo(): hijos(TAMANIO_ALFABETO,nullptr), finPalabra(false) {}
     };
-
+    //void destruirNodos(Nodo* &);
     Nodo* _raiz;
 };
 
