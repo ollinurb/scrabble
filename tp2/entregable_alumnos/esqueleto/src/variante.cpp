@@ -5,12 +5,16 @@ variante::variante(Nat n, Nat fichas, map<Letra, Nat> puntajes, set<Palabra> pal
     _cantfichas = fichas;
     vector<Nat> puntajesVec(TAMANIO_ALFABETO, 1);
     _puntajesLetraVec = puntajesVec;
-    for(map<Letra, Nat>::iterator it = puntajes.begin(); it != puntajes.end(); ++it){
-        _puntajesLetraVec[ord(it->first)] = it->second;
+    for(auto & puntaje : puntajes){
+        _puntajesLetraVec[ord(puntaje.first)] = puntaje.second;
     }
+    _Lmax = 0;
     _palabrasValidas = Trie();
-    for(set<Palabra>::iterator it = palabras.begin(); it != palabras.end(); ++it){
-        _palabrasValidas.agregar(*it);
+    for(const auto & palabra : palabras){
+        _palabrasValidas.agregar(palabra);
+        if (palabra.size() > _Lmax){
+            _Lmax = palabra.size();
+        }
     }
 }
 
@@ -28,4 +32,8 @@ Nat variante::puntajeLetra(Letra l) const{
 
 const bool variante::palabraLegitima(const Palabra p) const {
     return _palabrasValidas.pertenece(p);
+}
+
+Nat variante::Lmax() const{
+    return _Lmax;
 }

@@ -18,7 +18,16 @@ IdCliente servidor::conectarCliente(){
         timeStamp++;
         _broadcast.push_back(make_tuple(Notificacion::nuevaTurnoDe(0),timeStamp));
         timeStamp++;
+        for(int i = 0; i < _esperados; i++){
+            multiset<Letra> fichas;
+            for (int j = 0; j < _juego.ultimaReposicion(i).size(); j++ ){
+                fichas.insert(_juego.ultimaReposicion(i)[j]);
+            };
+            get<0>(_notifJugador[i]).push_back(make_tuple(Notificacion::nuevaReponer(fichas), timeStamp));
+            timeStamp ++;
+            fichas.clear();
         }
+    }
     return id;
 }
 

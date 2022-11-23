@@ -13,13 +13,14 @@ public:
     const Nat cantidadFichas() const;
     Nat puntajeLetra(Letra) const;
     const bool palabraLegitima(const Palabra) const;
+    Nat Lmax() const;
 
 private:
     Nat _tamaño;
     Nat _cantfichas;
     vector<Nat> _puntajesLetraVec;
     Trie _palabrasValidas;
-
+    Nat _Lmax;
 };
 
 

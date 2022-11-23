@@ -3,7 +3,7 @@
 #include "variante.h"
 
 juego::juego(const Nat k, const class variante& v, Repositorio& r) : _cantJugadores(k), _tablero(v.tamañoTablero()), _variante(v),
-                                                                _repositorio(r), _turno(0), _ronda(0) {
+                                                                _repositorio(r), _turno(0), _ronda(0), _ultimaReposicionxJugador(k) {
     vector<Nat> puntaje(k, 0);
     _puntaje = puntaje;
 
@@ -13,16 +13,16 @@ juego::juego(const Nat k, const class variante& v, Repositorio& r) : _cantJugado
     while (i < k) {
         int j = 0;
         while (j < v.cantidadFichas()){
-            _fichasEnMano[i][ord(r.front())] = _fichasEnMano[i][ord(r.front())] + 1;
-            r.pop_front();
+            _fichasEnMano[i][ord(_repositorio.front())] = _fichasEnMano[i][ord(_repositorio.front())] + 1;
+            _ultimaReposicionxJugador[i].push_back(_repositorio.front());
+            _repositorio.pop_front();
             j++;
         }
         i++;
     }
     vector<vector<vector<tuple<Letra, Nat, Nat, Nat>>>> ultimasFichasxJugador(k);
     _ultimasFichasxJugador = ultimasFichasxJugador;
-    vector<vector<Letra>> ultimaReposicionxJugador(k);
-    _ultimaReposicionxJugador = ultimaReposicionxJugador;
+
 }
 
 const variante juego::varianteJuego(){
@@ -35,6 +35,7 @@ const Nat juego::turno(){
 
 void juego::ubicar(const Ocurrencia &o){
     vector<tuple<Letra, Nat, Nat, Nat>> ocurs;
+    _ultimaReposicionxJugador[_turno].clear();
     for (tuple<Nat, Nat, Letra> const &x : o) {
         ocurs.push_back(make_tuple(get<2>(x), _ronda, get<0>(x), get<1>(x)));
         _tablero.ponerLetra(get<0>(x), get<1>(x), get<2>(x), _ronda);
@@ -52,7 +53,8 @@ void juego::ubicar(const Ocurrencia &o){
 
 const bool juego::jugadaValida(const Ocurrencia& ocurs){
     bool res = true;
-    if (_tablero.tamaño() < ocurs.size()) { //En vez de usar LMAX(no lo tenemos) usamos la longitud del tablero para asegurarnos que una ocurrencia no exceda las palabras posibles).
+    Nat Lmax = _variante.Lmax();
+    if (Lmax < ocurs.size()) {
         res = false;
     }
     Palabra palabra;
@@ -60,6 +62,59 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
     vector<tuple<Nat, Nat, Letra>> o;
     for(const auto& x : ocurs){
         o.push_back(x);
+    }
+
+    bool ocurrenciaComunVertical = true;
+    bool ocurrenciaComunHorizontal = true;
+    if(o.size() == 0){ //jugada valida por default
+        return true;
+    }
+
+    Nat fila = get<0>(o[0]);
+    Nat columna = get<1>(o[0]);
+    Nat maxFila = fila;
+    Nat maxColumna = columna;
+    Nat minFila = fila;
+    Nat minColumna = columna;
+
+    for(const auto& ficha : o){
+        if(get<0>(ficha) != fila)
+            ocurrenciaComunVertical = false;
+        if(get<1>(ficha) != columna)
+            ocurrenciaComunHorizontal = false;
+        if(get<0>(ficha) > maxFila || get<0>(ficha) < minFila){
+            maxFila = (get<0>(ficha) > maxFila) ? get<0>(ficha) : maxFila;
+            minFila = (get<0>(ficha) < minFila) ? get<0>(ficha) : minFila;
+        }
+        if(get<1>(ficha) > maxColumna || get<1>(ficha) < minColumna){
+            maxFila = (get<1>(ficha) > maxColumna) ? get<1>(ficha) : maxColumna;
+            minFila = (get<1>(ficha) < minColumna) ? get<1>(ficha) : minColumna;
+        }
+    }
+    if(!ocurrenciaComunHorizontal && !ocurrenciaComunVertical)
+        res = false;
+
+    if((ocurrenciaComunVertical && (maxFila - minFila) > Lmax) || (ocurrenciaComunVertical && (maxColumna - minColumna) > Lmax))
+        res = false;
+
+    else if(o.size() > 1 && res){
+        Nat espaciosTablero = 0;
+        if(ocurrenciaComunVertical){
+            for(Nat i = minFila; i <= maxFila; i++){
+                if(!_tablero.hayLetra(i, get<1>(o[0])))
+                    espaciosTablero++;
+            }
+            if(espaciosTablero > o.size())
+                res = false;
+        }
+        else{
+            for(Nat i = minColumna; i <= maxColumna; i++){
+                if(!_tablero.hayLetra(get<0>(o[0]), i))
+                    espaciosTablero++;
+            }
+            if(espaciosTablero > o.size())
+                res = false;
+        }
     }
     while (i < o.size() && res) { // Para cada elemento de la ocurrencia
         unsigned int f = get<0>(o[i]);
@@ -145,7 +200,7 @@ const Nat juego::puntaje(IdCliente id){
                     _puntaje[id] += _variante.puntajeLetra(get<0>(_tablero.letra(f - 1, c)));
                     f--;
             }
-            f = get<3>(jugadaActual[0]); //reinicias la fila
+            f = get<2>(jugadaActual[0]); //reinicias la fila
             while (_tablero.hayLetra(f + 1, c) && _tablero.enTablero(f + 1,c) && get<1>(_tablero.letra(f + 1, c)) <= ronda){
                 _puntaje[id] += _variante.puntajeLetra(get<0>(_tablero.letra(f + 1, c)));
                 f++;
@@ -158,7 +213,7 @@ const Nat juego::puntaje(IdCliente id){
                     _puntaje[id] += get<0>(_tablero.letra(f, c + 1));
                     c++;
                 }
-                c = get<2>(jugadaActual[j]);
+                c = get<3>(jugadaActual[j]);
                 while(_tablero.hayLetra(f,c - 1) && _tablero.enTablero(f,c - 1) && get<1>(_tablero.letra(f, c - 1)) <= ronda){
                     _puntaje[id] += get<0>(_tablero.letra(f, c - 1));
                     c--;

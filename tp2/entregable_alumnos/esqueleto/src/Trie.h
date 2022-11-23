@@ -6,6 +6,7 @@
 class Trie {
 public:
     Trie();
+    //~Trie();
     void agregar(const Palabra);
     const bool pertenece(Palabra) const;
 
