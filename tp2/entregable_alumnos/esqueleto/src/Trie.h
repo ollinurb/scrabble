@@ -6,18 +6,18 @@
 class Trie {
 public:
     Trie();
-    //~Trie();
+    ~Trie();
     void agregar(const Palabra);
-    const bool pertenece(Palabra) const;
+    bool pertenece(Palabra) const;
 
 private:
     struct Nodo {
         vector<Nodo*> hijos;
         bool finPalabra;
-
-        Nodo(): hijos(TAMANIO_ALFABETO,nullptr), finPalabra(false) {}
+        Nodo(): hijos(TAMANIO_ALFABETO, nullptr), finPalabra(false) {}
     };
-    //void destruirNodos(Nodo* &);
+
+    void destruirNodos(Nodo* &);
     Nodo* _raiz;
 };
 

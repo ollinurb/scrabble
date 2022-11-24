@@ -1,15 +1,11 @@
 #include "variante.h"
 
-variante::variante(Nat n, Nat fichas, map<Letra, Nat> puntajes, set<Palabra> palabras){
-    _tamaño = n;
-    _cantfichas = fichas;
-    vector<Nat> puntajesVec(TAMANIO_ALFABETO, 1);
-    _puntajesLetraVec = puntajesVec;
+variante::variante(Nat n, Nat fichas, map<Letra, Nat> puntajes, set<Palabra> palabras) : _puntajesLetraVec(TAMANIO_ALFABETO, 1),
+                                                                                            _tamaño(n), _cantfichas(fichas), _Lmax(0){
+
     for(auto & puntaje : puntajes){
         _puntajesLetraVec[ord(puntaje.first)] = puntaje.second;
     }
-    _Lmax = 0;
-    _palabrasValidas = Trie();
     for(const auto & palabra : palabras){
         _palabrasValidas.agregar(palabra);
         if (palabra.size() > _Lmax){

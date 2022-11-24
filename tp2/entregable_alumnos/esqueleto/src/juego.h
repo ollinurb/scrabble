@@ -30,6 +30,7 @@ private:
     Nat _cantJugadores;
     Nat _ronda;
     vector<vector<Letra>> _ultimaReposicionxJugador;
+    void ocurrenciaDiscontinua(vector<tuple<Nat, Nat, Letra>> o, const bool &ocurrenciaComunVertical, const bool& ocurrenciaComunHorizontal, bool& res);
 };
 
 

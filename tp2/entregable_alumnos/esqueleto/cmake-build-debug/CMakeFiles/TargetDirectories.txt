@@ -1,6 +1,0 @@
-/home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto/cmake-build-debug/CMakeFiles/gtest.dir
-/home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto/cmake-build-debug/CMakeFiles/gtest_main.dir
-/home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto/cmake-build-debug/CMakeFiles/correrTests.dir
-/home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto/cmake-build-debug/CMakeFiles/correrValgrind.dir
-/home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto/cmake-build-debug/CMakeFiles/rebuild_cache.dir
