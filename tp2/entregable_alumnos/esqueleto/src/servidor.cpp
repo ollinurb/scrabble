@@ -59,10 +59,21 @@ list<Notificacion> servidor::consultarNotificaciones(Nat c) {
     return lista;
 }
 
-
+bool servidor::tieneLasFichas(Nat id, Ocurrencia o){
+    bool res = true;
+    map<Letra, Nat> cantApariciones;
+    for(const auto& x : o){
+        cantApariciones[get<2>(x)]++;
+    }
+    for(const auto& x : o){
+        if(_juego.cuantasFichasTiene(id, get<2>(x)) < cantApariciones[get<2>(x)])
+            res = false;
+    }
+    return res;
+}
 
 void servidor::recibirMensaje(Nat id,Ocurrencia o){
-    if (_esperados == _jugadores.size() && _juego.turno() == id && _juego.jugadaValida(o)){
+    if (tieneLasFichas(id,o) && _esperados == _jugadores.size() && _juego.turno() == id && _juego.jugadaValida(o)){
         Nat puntajeAntesUbicar = _juego.puntaje(id);
         _juego.ubicar(o);
 

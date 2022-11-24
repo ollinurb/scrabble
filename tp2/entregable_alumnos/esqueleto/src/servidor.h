@@ -14,6 +14,7 @@ public:
     const Nat esperados();
     const Nat conectados();
     const class juego juego();
+    bool tieneLasFichas(Nat, Ocurrencia);
 
 private:
     Nat _esperados;

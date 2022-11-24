@@ -80,7 +80,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /snap/clion/209/bin/cmake/linux/bin/cmake --regenerate-during-build -S/home/ollinurb/Downloads/entregable_alumnos/esqueleto -B/home/ollinurb/Downloads/entregable_alumnos/esqueleto/cmake-build-debug
+  command = /snap/clion/209/bin/cmake/linux/bin/cmake --regenerate-during-build -S/home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto -B/home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto/cmake-build-debug
   description = Re-running CMake...
   generator = 1
 

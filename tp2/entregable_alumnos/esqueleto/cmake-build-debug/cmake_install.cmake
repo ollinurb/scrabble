@@ -1,4 +1,4 @@
-# Install script for directory: /home/ollinurb/Downloads/entregable_alumnos/esqueleto
+# Install script for directory: /home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/ollinurb/Downloads/entregable_alumnos/esqueleto/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ollinurb/Downloads/algo2-2022c2-grupal/tp2/entregable_alumnos/esqueleto/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

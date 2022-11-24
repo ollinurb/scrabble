@@ -37,7 +37,7 @@ void juego::ubicar(const Ocurrencia &o){
     vector<tuple<Letra, Nat, Nat, Nat>> ocurs;
     _ultimaReposicionxJugador[_turno].clear();
     for (tuple<Nat, Nat, Letra> const &x : o) {
-        ocurs.push_back(make_tuple(get<2>(x), _ronda, get<0>(x), get<1>(x)));
+        ocurs.push_back(make_tuple(get<2>(x), _ronda, get<1>(x), get<0>(x)));
         _tablero.ponerLetra(get<0>(x), get<1>(x), get<2>(x), _ronda);
         // Le sacamos la ficha al jugador.
         _fichasEnMano[_turno][ord(get<2>(x))]--;
@@ -50,52 +50,7 @@ void juego::ubicar(const Ocurrencia &o){
     _ronda++;
     _turno = (_turno + 1 ) % _cantJugadores;
 }
-/*
-vector<tuple<Nat, Nat, Letra>> merge(vector<tuple<Nat, Nat, Letra>>& v1, vector<tuple<Nat, Nat, Letra>> v2, bool horizontal){
-    vector<tuple<Nat, Nat, Letra>>res(v1.size() + v2.size());
-    int i = 0;
-    int j = 0;
-    int k = 0;
-    if(horizontal){
-        while(k < res.size()){
-            if (i >= v1.size() || (j < v2.size() && get<1>(v2[j]) < get<1>(v1[i]))){
-                res[k] = v2[j];
-                j++;
-            }
-            else{
-                res[k] = v1[i];
-                i++;
-            }
-            k++;
-        }
-    }
-    else{
-        while(k < res.size()){
-            if (i >= v1.size() || (j < v2.size() && get<0>(v2[j]) < get<0>(v1[i]))){
-                res[k] = v2[j];
-                j++;
-            }
-            else{
-                res[k] = v1[i];
-                i++;
-            }
-            k++;
-        }
-    }
-    return res;
-}
 
-vector<tuple<Nat, Nat, Letra>> mergeSortCustom(vector<tuple<Nat, Nat, Letra>> &v, bool horizontal){
-    if(v.size() == 1){
-        return v;
-    }
-    vector<tuple<Nat, Nat, Letra>> v2 = vector<tuple<Nat, Nat, Letra>>(v.begin(), v.begin() + (v.size()/2));
-    vector<tuple<Nat, Nat, Letra>> v3 = vector<tuple<Nat, Nat, Letra>>(v.begin() + v.size()/2, v.end());
-
-    v2 = mergeSortCustom(v2, horizontal);
-    v3 = mergeSortCustom(v3, horizontal);
-    return merge(v2, v3, horizontal);
-}*/
 
 const bool juego::jugadaValida(const Ocurrencia& ocurs){
     bool res = true;
@@ -175,12 +130,11 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
         }
     }
 
-    int i = 0;
-    // auto ocurrenciaOrdenada = mergeSortCustom(o, ocurrenciaComunHorizontal);
-    while (i < o.size() && res) { // Para cada elemento de la ocurrencia
-        unsigned int f = get<0>(o[i]);
-        unsigned int c = get<1>(o[i]);
-        int j = i;
+    if (ocurrenciaComunHorizontal || o.size() == 1) {
+        int j = 0;
+        Nat f = get<0>(o[j]); // fila
+        Nat c = get<1>(o[j]); // columna
+
         while (_tablero.enTablero(f, c - 1) && _tablero.hayLetra(f, c - 1) && res) { // Obtener primer letra de palabra horizontal.
             c--;
         }
@@ -194,27 +148,83 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
             }
             c++;
         }
+
         if (!_variante.palabraLegitima(palabra)){ //Chequear validez de palabra.
             res = false;
         }
+
         palabra.clear();
-        c = get<1>(o[i]);
-        while (_tablero.enTablero(f - 1, c) && (_tablero.hayLetra(f - 1, c)) && res) { // Analogamente a buscar la palabra horizontal pero vertical
+
+        Nat i = 0; //i-esima ficha de la jugada (jugada_actual[j])
+        while(i < o.size() && res) {
+
+            f = get<0>(o[i]);// fila
+            c = get<1>(o[i]); // columna
+            while (_tablero.hayLetra(f - 1, c) && _tablero.enTablero(f - 1, c)) {
+                f--;
+            }
+            while (_tablero.hayLetra(f, c) && _tablero.enTablero(f, c) || f == get<0>(o[i])) {
+                if (f == get<0>(o[i])){
+                    palabra.push_back(get<2>(o[i]));
+                } else {
+                    palabra.push_back(get<0>(_tablero.letra(f,c)));
+                }
+                f++;
+            }
+            if(!_variante.palabraLegitima(palabra)){
+                res = false;
+            }
+            palabra.clear();
+            i++;
+        }
+    }
+    else if(ocurrenciaComunVertical) {
+        int j = 0;
+        Nat f = get<0>(o[0]); // fila
+        Nat c = get<1>(o[0]); // columna
+        while (_tablero.hayLetra(f - 1, c) && _tablero.enTablero(f - 1, c)){ //busca comienzo ocurrencia comun vertical.
             f--;
         }
-        j = i;
-        while(_tablero.enTablero(f, c) && _tablero.hayLetra(f, c) || f == get<0>(o[j]) && res) {
-            if (f == get<0>(o[j])) {
+
+        while (_tablero.hayLetra(f, c) && _tablero.enTablero(f,c) || f == get<0>(o[j])){ //revisa ocurrencia comun vertical.
+            if (f == get<0>(o[j])){
                 palabra.push_back(get<2>(o[j]));
                 j++;
-            } else
-                palabra.push_back(get<0>(_tablero.letra(f, c)));
+            } else {
+                palabra.push_back(get<0>(_tablero.letra(f,c)));
+            }
             f++;
         }
-        if (! _variante.palabraLegitima(palabra))
+        if (!_variante.palabraLegitima(palabra)){
             res = false;
+        }
         palabra.clear();
-        i++;
+
+        j = 0; // Esta j es para iterar por sobre las fichas de la jugada
+        while(j < o.size() && res) {
+            f = get<0>(o[j]); // fila
+            c = get<1>(o[j]);// columna
+
+            while(_tablero.hayLetra(f,c - 1) && _tablero.enTablero(f,c - 1)){
+                c--;
+            }
+
+            while (_tablero.hayLetra(f, c) && _tablero.enTablero(f, c) || c == get<1>(o[j])){
+                if (c == get<1>(o[j])){
+                    palabra.push_back(get<2>(o[j]));
+                } else {
+                    palabra.push_back(get<0>(_tablero.letra(f,c)));
+                }
+                c++;
+            }
+
+            if (!_variante.palabraLegitima(palabra)){
+                res = false;
+            }
+            palabra.clear();
+
+            j++;
+        }
     }
     return res;
 }
@@ -222,6 +232,7 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
 const Nat juego::puntaje(IdCliente id){
     for(int i = 0; i < _ultimasFichasxJugador[id].size(); i++) { //iteras sobre las rondas/jugadas
         vector<tuple<Letra, Nat, Nat, Nat>> jugadaActual = _ultimasFichasxJugador[id][i];
+
         bool ocurrenciaComunVertical = (jugadaActual.size() > 1 && get<3>(jugadaActual[0]) == get<3>(jugadaActual[1]));
         bool ocurrenciaComunHorizontal = (jugadaActual.size() > 1 && get<2>(jugadaActual[0]) == get<2>(jugadaActual[1]));
         if (ocurrenciaComunHorizontal || jugadaActual.size() == 1) {
@@ -285,6 +296,9 @@ const Nat juego::puntaje(IdCliente id){
                 }
                 j++;
             }
+        }
+        for(const auto& x : jugadaActual){
+            _puntaje[id] += _variante.puntajeLetra(get<0>(x));
         }
     }
     _ultimasFichasxJugador[id].clear();
