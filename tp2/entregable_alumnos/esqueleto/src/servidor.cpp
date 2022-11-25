@@ -14,7 +14,7 @@ IdCliente servidor::conectarCliente(){
     get<0>(_notifJugador[id]).push_back(make_tuple(Notificacion::nuevaIdCliente(id), timeStamp));
     timeStamp++;
     if(_jugadores.size() == _esperados){
-        _broadcast.push_back(make_tuple(Notificacion::nuevaEmpezar(_juego.varianteJuego().tamañoTablero()),timeStamp));
+        _broadcast.push_back(make_tuple(Notificacion::nuevaEmpezar(_juego.varianteJuego().tamanoTablero()), timeStamp));
         timeStamp++;
         _broadcast.push_back(make_tuple(Notificacion::nuevaTurnoDe(0),timeStamp));
         timeStamp++;

@@ -2,12 +2,10 @@
 #include "Tipos.h"
 #include "variante.h"
 
-juego::juego(const Nat k, const class variante& v, Repositorio& r) : _cantJugadores(k), _tablero(v.tamañoTablero()), _variante(v),
-                                                                _repositorio(r), _turno(0), _ronda(0), _ultimaReposicionxJugador(k),
-                                                                     _ultimasFichasxJugador(k){
+juego::juego(const Nat k, const class variante& v, Repositorio& r) : _cantJugadores(k), _tablero(v.tamanoTablero()),_repositorio(r), _turno(0), _ronda(0), _ultimaReposicionxJugador(k),_ultimasFichasxJugador(k),
+        _variante(v) {
     vector<Nat> puntaje(k, 0);
     _puntaje = puntaje;
-
     vector<vector<Nat>> fichasEnMano(k, vector<Nat>(TAMANIO_ALFABETO, 0));
     _fichasEnMano = fichasEnMano;
     int i = 0;
@@ -23,7 +21,7 @@ juego::juego(const Nat k, const class variante& v, Repositorio& r) : _cantJugado
     }
 }
 
-const variante juego::varianteJuego(){
+const variante& juego::varianteJuego(){
     return _variante;
 }
 
@@ -146,7 +144,7 @@ const bool juego::jugadaValida(const Ocurrencia& ocurs){
         while (_tablero.enTablero(f, c - 1) && _tablero.hayLetra(f, c - 1) && res) { // Obtener primer letra de palabra horizontal que forma la ocurrencia
             c--;
         }
-        while (_tablero.enTablero(f, c) && (_tablero.hayLetra(f, c) || c == get<1>(o[j])) && res){ // Avanzamos hasta la última letra para conseguir la palabra
+        while (_tablero.enTablero(f, c) && (_tablero.hayLetra(f, c)) || (j <o.size() && c == get<1>(o[j])) && res){ // Avanzamos hasta la última letra para conseguir la palabra
             if (c == get<1>(o[j])) {
                 palabra.push_back(get<2>(o[j]));
                 j++;

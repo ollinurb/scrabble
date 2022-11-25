@@ -14,7 +14,7 @@ const bool tablero::hayLetra(Nat i, Nat j) const{
     return (i < _tablero.size() && j < _tablero.size()) && get<0>(_tablero[i][j]) != '$';
 }
 
-const Nat tablero::tamaño() const {
+const Nat tablero::tamano() const {
     return _tablero.size();
 }
 

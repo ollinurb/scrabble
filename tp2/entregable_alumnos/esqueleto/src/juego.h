@@ -9,7 +9,7 @@ class juego {
 public:
     juego(const Nat, const variante&, Repositorio&);
 
-    const variante varianteJuego();
+    const variante& varianteJuego();
     const Nat turno();
     void ubicar(const Ocurrencia&);
     const bool jugadaValida(const Ocurrencia&);

@@ -9,14 +9,16 @@
 class variante {
 public:
     variante(Nat, Nat, map<Letra, Nat>, set<Palabra>);
-    const Nat tamañoTablero() const;
+    variante& operator=(const variante& aCopiar);
+    variante(const variante& aCopiar);
+    const Nat tamanoTablero() const;
     const Nat cantidadFichas() const;
     Nat puntajeLetra(Letra) const;
-    const bool palabraLegitima(const Palabra) const;
+    bool palabraLegitima(const Palabra&) const;
     Nat Lmax() const;
 
 private:
-    Nat _tamaño;
+    Nat _tamano;
     Nat _cantfichas;
     vector<Nat> _puntajesLetraVec;
     Trie _palabrasValidas;
